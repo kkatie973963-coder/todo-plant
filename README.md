@@ -2,6 +2,8 @@
 
 혼자 쓰는 할 일 + 식물 물주기 관리 웹앱. 서버·빌드 없이 `index.html`을 브라우저로 열면 바로 동작합니다.
 
+**주소: https://kkatie973963-coder.github.io/todo-plant/** (GitHub Pages, main 브랜치에 푸시하면 자동 반영)
+
 - 데이터: 할 일·식물 정보는 `localStorage`(`tp:` 접두사), 식물 사진은 IndexedDB(`todo-plant` DB)에 저장
 - 데이터는 **브라우저별로 따로** 저장됩니다 (같은 브라우저·같은 경로로 열어야 유지). PC와 폰 사이 동기화는 없음
 - 식물 사진: '사진 찍기'(폰 카메라 바로 실행) / '앨범에서 선택'. 저장 전 긴 변 1000px JPEG로 줄임
