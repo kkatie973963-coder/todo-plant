@@ -3,9 +3,11 @@
 const TodoUI = {
   draft: '',
 
-  row(t) {
+  // opts.date: 이미 날짜가 보이는 화면이면 그 날짜와 같은 기한은 생략 (기본: 오늘)
+  row(t, opts = {}) {
     const today = U.today();
     const overdue = !t.done && t.due && t.due < today;
+    const showDate = t.due && t.due !== (opts.date || today);
     const toggle = () => {
       Todos.toggle(t.id);
       if (!t.done) App.toast('완료했어요', { label: '되돌리기', onClick: () => Todos.toggle(t.id) });
@@ -27,7 +29,7 @@ const TodoUI = {
       ),
       U.h('div', { class: 'row-main' },
         U.h('div', { class: 'row-title' }, t.title),
-        t.due
+        showDate
           ? U.h('div', { class: 'row-sub' + (overdue ? ' danger' : '') },
               Icon('calendar', 13), ` ${U.fmt(t.due)} · ${U.relDay(t.due)}`)
           : null
@@ -38,8 +40,9 @@ const TodoUI = {
   },
 
   // Reminders 스타일의 인라인 입력 줄
-  addRow() {
-    let due = '';
+  //   opts.date가 있으면 그 날짜로 고정(달력에서 고른 날), 없으면 기본 오늘 + 날짜 칩
+  addRow(opts = {}) {
+    let due = opts.date || U.today();
     const input = U.h('input', {
       id: 'todo-input',
       class: 'row-input',
@@ -53,24 +56,28 @@ const TodoUI = {
         if (e.key === 'Enter' && !e.isComposing) submit();
       },
     });
-    const dateLabel = U.h('span', { class: 'date-chip-label' }, '기한');
+    const chipText = (d) => (Math.abs(U.diffDays(d, U.today())) <= 1 ? U.relDay(d) : U.fmt(d));
+    const dateLabel = U.h('span', { class: 'date-chip-label' }, chipText(due));
     const dateInput = U.h('input', {
       type: 'date',
       class: 'date-chip-input',
-      'aria-label': '기한',
+      'aria-label': '날짜',
+      value: due,
       onchange: () => {
-        due = dateInput.value;
-        dateLabel.textContent = due ? U.fmt(due) : '기한';
-        chip.classList.toggle('on', !!due);
+        due = dateInput.value || U.today(); // 지우면 오늘로
+        dateLabel.textContent = chipText(due);
+        chip.classList.toggle('on', due !== U.today());
       },
     });
-    const chip = U.h('label', { class: 'date-chip' }, Icon('calendar', 15), dateLabel, dateInput);
+    const chip = opts.date
+      ? null
+      : U.h('label', { class: 'date-chip' }, Icon('calendar', 15), dateLabel, dateInput);
 
     const submit = () => {
       const title = input.value.trim();
       if (!title) return input.focus();
       TodoUI.draft = '';
-      Todos.add(title, due || null);
+      Todos.add(title, due);
       document.getElementById('todo-input')?.focus();
     };
 
@@ -98,7 +105,7 @@ App.register({
     const open = Todos.open();
     const done = Todos.done();
 
-    root.append(UI.section(null, UI.group(TodoUI.addRow(), open.map(TodoUI.row))));
+    root.append(UI.section(null, UI.group(TodoUI.addRow(), open.map((t) => TodoUI.row(t)))));
 
     if (!open.length && !done.length) {
       root.append(UI.empty('checklist', '할 일이 없어요', '위 입력칸에 적고 Enter를 누르세요'));
@@ -122,7 +129,7 @@ App.register({
             U.h('h3', { class: 'section-title' }, `완료됨 ${done.length}`),
             clear
           ),
-          UI.group(done.map(TodoUI.row))
+          UI.group(done.map((t) => TodoUI.row(t)))
         )
       );
     }

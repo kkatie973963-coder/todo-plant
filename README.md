@@ -21,7 +21,7 @@ js/core/
   data.js           Todos, Plants — 데이터 로직 (화면과 분리)
   app.js            탭 등록·라우팅·탭바·바텀 시트·토스트, 공통 UI
 js/modules/
-  today.js          오늘: 물 줄 식물 + 오늘 할 일
+  today.js          오늘: 월간 달력(할 일·물 주기 점) + 고른 날짜의 물 주기·할 일
   todos.js          할 일
   plants.js         식물 (사진, 물주기 간격, '물 줬어요')
 ```

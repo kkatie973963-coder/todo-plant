@@ -7,7 +7,14 @@ const Todos = {
   save(list) {
     Store.set('todos', list);
   },
-  add(title, due = null) {
+  // 예전 버전에서 날짜 없이 저장된 할 일은 오늘 날짜로 옮김 (한 번만)
+  migrate() {
+    if (Store.get('todosVersion', 1) >= 2) return;
+    const today = U.today();
+    this.save(this.all().map((t) => (t.due ? t : { ...t, due: today })));
+    Store.set('todosVersion', 2);
+  },
+  add(title, due = U.today()) {
     const todo = { id: U.uid(), title, due, done: false, createdAt: Date.now(), doneAt: null };
     this.save([todo, ...this.all()]);
     return todo;
@@ -50,10 +57,15 @@ const Todos = {
       .filter((t) => t.done)
       .sort((a, b) => b.doneAt - a.doneAt);
   },
-  // 오늘 볼 할 일: 기한이 오늘 이전이거나 기한이 없는 것
+  // 오늘 볼 할 일: 기한이 오늘이거나 지난 미완료
   forToday() {
     const today = U.today();
     return this.open().filter((t) => !t.due || t.due <= today);
+  },
+  // 특정 날짜의 할 일 (미완료 먼저, 완료는 뒤)
+  onDate(date) {
+    const list = this.all().filter((t) => t.due === date);
+    return [...list.filter((t) => !t.done), ...list.filter((t) => t.done)];
   },
 };
 
@@ -126,4 +138,24 @@ const Plants = {
   due() {
     return this.sorted().filter(({ s }) => s.days <= 0);
   },
+  // 앞으로의 물주기 일정: { 'YYYY-MM-DD': [plant, ...] } (from~to 범위, 오늘 이전은 제외)
+  // 이미 지난 물주기는 오늘로 당겨 계산하고, 이후는 간격마다 반복
+  schedule(from, to) {
+    const today = U.today();
+    const start = from > today ? from : today;
+    const map = {};
+    for (const p of this.all()) {
+      let d = this.status(p).next;
+      if (d < today) d = today;
+      while (d < start) d = U.addDays(d, p.interval);
+      for (; d <= to; d = U.addDays(d, p.interval)) (map[d] ||= []).push(p);
+    }
+    return map;
+  },
+  // 지난 날짜에 실제로 물 준 식물
+  wateredOn(date) {
+    return this.all().filter((p) => (p.log || []).includes(date));
+  },
 };
+
+Todos.migrate();

@@ -562,3 +562,75 @@ button.row:active, a.row:active, .plant-row:active, .row[onclick]:active { backg
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* ---------- 달력 (오늘 탭) ---------- */
+.calendar { padding: 6px 8px 10px; }
+.cal-head {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px 6px 8px;
+}
+.cal-title { flex: 1; font-size: 17px; font-weight: 600; }
+.cal-today { padding: 0 8px; }
+.cal-nav { width: 36px; height: 36px; margin: 0; }
+.flip { display: inline-flex; transform: scaleX(-1); }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  row-gap: 2px;
+}
+.cal-week .cal-cell {
+  height: 24px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+}
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cal-day { height: 46px; gap: 3px; border-radius: 10px; }
+.cal-num {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.cal-day.is-today .cal-num { color: var(--accent); font-weight: 600; }
+.cal-day.is-selected .cal-num { background: var(--text); color: var(--card); font-weight: 600; }
+.cal-day.is-selected.is-today .cal-num { background: var(--accent); color: #fff; }
+.cal-day:active .cal-num { background: var(--fill); }
+
+.cal-dots { display: flex; gap: 3px; height: 5px; }
+.dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; }
+.dot.todo { background: var(--text2); }
+.dot.water { background: var(--accent); }
+
+.cal-legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 6px 8px 0;
+  font-size: 12px;
+  color: var(--text2);
+}
+.cal-legend span { display: inline-flex; align-items: center; gap: 4px; }
+
+.day-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 28px 0 -12px;
+  padding: 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.day-rel { font-size: 15px; font-weight: 400; color: var(--text2); }

@@ -59,14 +59,15 @@ const PlantUI = {
   },
 
   // 오늘 탭 등에서 쓰는 한 줄 형태
-  row({ p, s }) {
+  //   opts.sub: 상태 대신 보여줄 보조 문구, opts.button: false면 '물 줬어요' 버튼 숨김
+  row({ p, s }, opts = {}) {
     return U.h('div', { class: 'row plant-row', onclick: () => PlantUI.openSheet(p) },
       PlantUI.photo(p, 'thumb'),
       U.h('div', { class: 'row-main' },
         U.h('div', { class: 'row-title' }, p.name),
-        U.h('div', { class: 'row-sub' }, PlantUI.statusText(s))
+        U.h('div', { class: 'row-sub' }, opts.sub || PlantUI.statusText(s))
       ),
-      PlantUI.waterButton(p, s, true)
+      opts.button === false ? null : PlantUI.waterButton(p, s, true)
     );
   },
 
