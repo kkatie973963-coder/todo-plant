@@ -22,7 +22,7 @@ js/core/
   app.js            탭 등록·라우팅·탭바·바텀 시트·토스트, 공통 UI
 js/modules/
   today.js          오늘: 월간 달력(할 일·물 주기 점) + 고른 날짜의 물 주기·할 일
-  todos.js          할 일
+  todos.js          할 일 (폴더: 학교·프로젝트·집안일 — data.js의 FOLDERS에서 추가/변경)
   plants.js         식물 (사진, 물주기 간격, '물 줬어요')
 ```
 

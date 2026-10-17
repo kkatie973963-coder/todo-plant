@@ -139,7 +139,7 @@ const Today = {
     return UI.section(open ? `할 일 ${open}` : '할 일',
       UI.group(
         TodoUI.addRow({ date }),
-        list.map((t) => TodoUI.row(t, { date }))
+        list.map((t) => TodoUI.row(t, { date, showFolder: true }))
       )
     );
   },

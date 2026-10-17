@@ -634,3 +634,48 @@ button.row:active, a.row:active, .plant-row:active, .row[onclick]:active { backg
   letter-spacing: -0.02em;
 }
 .day-rel { font-size: 15px; font-weight: 400; color: var(--text2); }
+
+/* ---------- 할 일 폴더 ---------- */
+.segmented {
+  display: flex;
+  padding: 2px;
+  border-radius: 9px;
+  background: var(--fill);
+}
+.seg {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 4px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.seg.on {
+  background: var(--card);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.seg-count { font-size: 12px; color: var(--text2); font-variant-numeric: tabular-nums; }
+
+.folder-title { display: flex; align-items: center; gap: 5px; }
+
+.row-tap { text-align: left; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+.row-sub .sep { margin: 0 2px; }
+.sub-date { display: inline-flex; align-items: center; gap: 2px; }
+.sub-date.danger { color: var(--danger); }
+
+.chip-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+.add-row .date-chip + .date-chip { margin-left: -6px; }

@@ -1,5 +1,13 @@
 /* 도메인 데이터: 화면(모듈)과 분리해 두어 여러 탭에서 재사용 */
 
+// 할 일 폴더 — 여기에 항목을 추가하면 탭·선택지에 자동 반영
+const FOLDERS = [
+  { id: 'school', name: '학교', icon: 'book' },
+  { id: 'project', name: '프로젝트', icon: 'folder' },
+  { id: 'home', name: '집안일', icon: 'home' },
+];
+const folderName = (id) => FOLDERS.find((f) => f.id === id)?.name || '분류 없음';
+
 const Todos = {
   all() {
     return Store.get('todos', []);
@@ -14,10 +22,13 @@ const Todos = {
     this.save(this.all().map((t) => (t.due ? t : { ...t, due: today })));
     Store.set('todosVersion', 2);
   },
-  add(title, due = U.today()) {
-    const todo = { id: U.uid(), title, due, done: false, createdAt: Date.now(), doneAt: null };
+  add(title, due = U.today(), folder = null) {
+    const todo = { id: U.uid(), title, due, folder, done: false, createdAt: Date.now(), doneAt: null };
     this.save([todo, ...this.all()]);
     return todo;
+  },
+  update(id, patch) {
+    this.save(this.all().map((t) => (t.id === id ? { ...t, ...patch } : t)));
   },
   toggle(id) {
     this.save(
