@@ -83,28 +83,27 @@ const PlantUI = {
       removePhoto: false,
     };
 
-    // 사진 선택
+    // 사진 선택 — 카메라로 바로 찍기(capture) / 앨범에서 고르기 두 갈래
     const preview = U.h('div', { class: 'photo-pick-preview' });
     const setPreview = (url) => {
       preview.replaceChildren(
         url ? U.h('img', { src: url, alt: '' }) : Icon('camera', 30, 'photo-placeholder')
       );
-      pickLabel.textContent = url ? '사진 변경' : '사진 추가';
       removeBtn.hidden = !url;
     };
-    const fileInput = U.h('input', {
-      type: 'file',
-      accept: 'image/*',
-      hidden: true,
-      onchange: () => {
-        const file = fileInput.files[0];
-        if (!file) return;
-        state.file = file;
-        state.removePhoto = false;
-        setPreview(URL.createObjectURL(file));
-      },
-    });
-    const pickLabel = U.h('span', { class: 'photo-pick-label' }, '사진 추가');
+    const onPick = (input) => () => {
+      const file = input.files[0];
+      if (!file) return;
+      state.file = file;
+      state.removePhoto = false;
+      setPreview(URL.createObjectURL(file));
+      input.value = ''; // 같은 사진을 다시 골라도 change가 일어나도록
+    };
+    const cameraInput = U.h('input', { type: 'file', accept: 'image/*', capture: 'environment', hidden: true });
+    const albumInput = U.h('input', { type: 'file', accept: 'image/*', hidden: true });
+    cameraInput.addEventListener('change', onPick(cameraInput));
+    albumInput.addEventListener('change', onPick(albumInput));
+
     const removeBtn = U.h('button', {
       class: 'link-btn danger',
       type: 'button',
@@ -112,15 +111,19 @@ const PlantUI = {
       onclick: () => {
         state.file = null;
         state.removePhoto = true;
-        fileInput.value = '';
         setPreview(null);
       },
     }, '사진 삭제');
     const picker = U.h('div', { class: 'photo-pick' },
-      U.h('button', { class: 'photo-pick-btn', type: 'button', onclick: () => fileInput.click() },
-        preview, pickLabel),
+      U.h('button', { class: 'photo-pick-btn', type: 'button', 'aria-label': '앨범에서 사진 선택', onclick: () => albumInput.click() },
+        preview),
+      U.h('div', { class: 'photo-pick-actions' },
+        U.h('button', { class: 'chip-btn', type: 'button', onclick: () => cameraInput.click() }, Icon('camera', 17), '사진 찍기'),
+        U.h('button', { class: 'chip-btn', type: 'button', onclick: () => albumInput.click() }, Icon('image', 17), '앨범에서 선택')
+      ),
       removeBtn,
-      fileInput
+      cameraInput,
+      albumInput
     );
     setPreview(null);
     if (plant?.photo) ImageDB.url(plant.id).then((url) => url && !state.file && !state.removePhoto && setPreview(url));
